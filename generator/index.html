@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>jsPlayerCodeGenerator</title>
+	<meta name="description" content="" />
+	
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<script src="dist/clipboard.min.js"></script>
+		
+	
+</head>
+<body>
+	<p>Date: <input type="text" id="datepicker"></p>
+	<p>Time: <input type="text" id="timepicker" value="20:00"></p>
+	<p>Video length: <input type="text" id="videoLength" value="00:00:00"></p>
+	<p>BaseURL: <input type="text" style="width:400px;" id="baseURL"></p>
+	<p>Output: <input id="out" style="width:400px;" /></p>
+	<p>Каждыый день: <input type="checkbox" id="isEveryday"></p>
+	<p>Тест: <input type="checkbox" id="isTest"></p>
+	<button id="generate">Generate</button>
+	
+	<button class="btn" data-clipboard-target="#out">
+		Copy to clipboard
+	</button>
+	
+	
+	
+
+	
+	
+	<script>
+		$(function() {
+		$( "#datepicker" ).datepicker();
+		});
+		
+		new Clipboard('.btn');
+		
+		
+	</script>
+	
+	<div id="haxe:trace"></div>
+	<script type="text/javascript" src="jsPlayerCodeGenerator.js"></script>
+</body>
+</html>
