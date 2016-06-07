@@ -286,7 +286,7 @@ external_DataLoader.__name__ = true;
 external_DataLoader.__super__ = events_Observer;
 external_DataLoader.prototype = $extend(events_Observer.prototype,{
 	load: function(path) {
-		this.httpRequest.open("GET",path,true);
+		this.httpRequest.open("POST",path,true);
 		this.httpRequest.send();
 	}
 	,onLoadComplete: function() {
