@@ -6,32 +6,80 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var events_Observer = function() {
+	this.describes = new haxe_ds_StringMap();
+};
+events_Observer.__name__ = true;
+events_Observer.prototype = {
+	addEventListener: function(type,callback) {
+		var callbackList = this.describes.get(type);
+		if(callbackList == null) {
+			callbackList = [];
+			{
+				this.describes.set(type,callbackList);
+				callbackList;
+			}
+		}
+		callbackList.push(callback);
+	}
+	,dispatchEvent: function(event) {
+		var callbackList = this.describes.get(event.type);
+		if(callbackList != null) {
+			var _g = 0;
+			while(_g < callbackList.length) {
+				var callback = callbackList[_g];
+				++_g;
+				callback(event);
+			}
+		}
+	}
+	,__class__: events_Observer
+};
+var DateCorrectionTool = function() {
+	events_Observer.call(this);
+};
+DateCorrectionTool.__name__ = true;
+DateCorrectionTool.__super__ = events_Observer;
+DateCorrectionTool.prototype = $extend(events_Observer.prototype,{
+	correct: function() {
+		this.correctBy(this.getPath());
+	}
+	,getPath: function() {
+		if(window.location.href.indexOf("bettaofthewoolf") != -1) return "http://murigin.ru/auto/utc_time.php"; else return "utc_time.php";
+	}
+	,correctBy: function(path) {
+		var dataLoader = new external_DataLoader();
+		dataLoader.addEventListener("onLoad",$bind(this,this.onDataLoad));
+		dataLoader.load(path);
+	}
+	,onDataLoad: function(e) {
+		var dataParts;
+		if(e.data.indexOf("\r\n") != -1) dataParts = e.data.split("\r\n"); else dataParts = e.data.split("\n");
+		var correction = parseFloat(dataParts[0]);
+		StableDate.correct(correction);
+		Settings.getInstance().TODAY_MONTH = Std.parseInt(dataParts[2]);
+		Settings.getInstance().TODAY_DAY = Std.parseInt(dataParts[3]);
+		Settings.getInstance().TODAY = Std.parseInt(dataParts[1]);
+		haxe_Log.trace(dataParts[0],{ fileName : "DateCorrectionTool.hx", lineNumber : 54, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		haxe_Log.trace(Settings.getInstance().TODAY_MONTH,{ fileName : "DateCorrectionTool.hx", lineNumber : 55, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		haxe_Log.trace(Settings.getInstance().TODAY_DAY,{ fileName : "DateCorrectionTool.hx", lineNumber : 56, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		haxe_Log.trace(Settings.getInstance().TODAY,{ fileName : "DateCorrectionTool.hx", lineNumber : 57, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		this.dispatchEvent(new events_Event("complete"));
+	}
+	,__class__: DateCorrectionTool
+});
 var EntryPoint = function() { };
 EntryPoint.__name__ = true;
 EntryPoint.main = function() {
-	haxe_Log.trace(EntryPoint.main,{ fileName : "EntryPoint.hx", lineNumber : 10, className : "EntryPoint", methodName : "main", customParams : [EntryPoint.main]});
+	haxe_Log.trace(EntryPoint.main,{ fileName : "EntryPoint.hx", lineNumber : 9, className : "EntryPoint", methodName : "main", customParams : [EntryPoint.main]});
 	EntryPoint.onStart();
 };
 EntryPoint.onStart = function() {
-	EntryPoint.correctBy(getTimeCorrectURL());
+	var dateCorrectionTool = new DateCorrectionTool();
+	dateCorrectionTool.addEventListener("complete",EntryPoint.onCorrectionComplete);
+	dateCorrectionTool.correct();
 };
-EntryPoint.correctBy = function(path) {
-	var dataLoader = new external_DataLoader();
-	dataLoader.addEventListener("onLoad",EntryPoint.onDataLoad);
-	dataLoader.load(path);
-};
-EntryPoint.onDataLoad = function(e) {
-	var dataParts;
-	if(e.data.indexOf("\r\n") != -1) dataParts = e.data.split("\r\n"); else dataParts = e.data.split("\n");
-	var correction = parseFloat(dataParts[0]);
-	StableDate.correct(correction);
-	Settings.getInstance().TODAY_MONTH = Std.parseInt(dataParts[2]);
-	Settings.getInstance().TODAY_DAY = Std.parseInt(dataParts[3]);
-	Settings.getInstance().TODAY = Std.parseInt(dataParts[1]);
-	haxe_Log.trace(dataParts[0],{ fileName : "EntryPoint.hx", lineNumber : 42, className : "EntryPoint", methodName : "onDataLoad"});
-	haxe_Log.trace(Settings.getInstance().TODAY_MONTH,{ fileName : "EntryPoint.hx", lineNumber : 43, className : "EntryPoint", methodName : "onDataLoad"});
-	haxe_Log.trace(Settings.getInstance().TODAY_DAY,{ fileName : "EntryPoint.hx", lineNumber : 44, className : "EntryPoint", methodName : "onDataLoad"});
-	haxe_Log.trace(Settings.getInstance().TODAY,{ fileName : "EntryPoint.hx", lineNumber : 45, className : "EntryPoint", methodName : "onDataLoad"});
+EntryPoint.onCorrectionComplete = function(e) {
 	new Main();
 };
 var HxOverrides = function() { };
@@ -338,35 +386,6 @@ events_DataEvent.__super__ = events_Event;
 events_DataEvent.prototype = $extend(events_Event.prototype,{
 	__class__: events_DataEvent
 });
-var events_Observer = function() {
-	this.describes = new haxe_ds_StringMap();
-};
-events_Observer.__name__ = true;
-events_Observer.prototype = {
-	addEventListener: function(type,callback) {
-		var callbackList = this.describes.get(type);
-		if(callbackList == null) {
-			callbackList = [];
-			{
-				this.describes.set(type,callbackList);
-				callbackList;
-			}
-		}
-		callbackList.push(callback);
-	}
-	,dispatchEvent: function(event) {
-		var callbackList = this.describes.get(event.type);
-		if(callbackList != null) {
-			var _g = 0;
-			while(_g < callbackList.length) {
-				var callback = callbackList[_g];
-				++_g;
-				callback(event);
-			}
-		}
-	}
-	,__class__: events_Observer
-};
 var external_DataLoader = function() {
 	events_Observer.call(this);
 	this.httpRequest = js_Browser.createXMLHttpRequest();
@@ -1469,6 +1488,7 @@ StableDate.isInit = false;
 StableDate.updateTimer = new haxe_Timer(500);
 StableDate.currentTime = 0;
 StableDate.lastTime = -1;
+events_Event.COMPLETE = "complete";
 events_DataEvent.ON_LOAD = "onLoad";
 external_DataLoader.ON_LOAD = "onLoad";
 haxe_crypto_Base64.CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
