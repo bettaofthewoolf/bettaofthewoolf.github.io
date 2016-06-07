@@ -263,7 +263,7 @@ function initialize()
 	setTimeout(onVideoReady, videoLoadingDelay());
 	
 	presentationPlayer.loadVideoById({
-								'videoId': 'XdqF-KPn9So',
+								'videoId': getPresentationVideoID(),
 								'startSeconds': startTime,
 								//'endSeconds': 60,
 								'suggestedQuality': 'default'});
@@ -271,7 +271,7 @@ function initialize()
 	presentationPlayer.setVolume(getStartVolume());
 	
 	speackerPlayer.loadVideoById({
-							'videoId': 'ZDgXHUTPpUQ',
+							'videoId': getSpeackerVideoID(),
 							'startSeconds': startTime,
 							//'endSeconds': 60,
 							'suggestedQuality': 'default'});

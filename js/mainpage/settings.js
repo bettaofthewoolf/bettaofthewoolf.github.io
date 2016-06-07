@@ -47,3 +47,11 @@ function redirrectURL()
 {
 	return "http://murigin.ru/auto/end.html"; //String for reddirect after video end
 }
+
+function getPresentationVideoID()
+{
+}
+
+function getSpeackerVideoID()
+{
+}
