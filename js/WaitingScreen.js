@@ -1120,7 +1120,7 @@ view_WaitingScreen.__name__ = true;
 view_WaitingScreen.__super__ = events_Observer;
 view_WaitingScreen.prototype = $extend(events_Observer.prototype,{
 	show: function() {
-		var waitingDelay = Std["int"](Settings.getInstance().START_TIME - StableDate.currentTime);
+		var waitingDelay = Std["int"](Settings.getInstance().START_TIME - StableDate.currentTime - 7200000);
 		haxe_Log.trace("waiting delay",{ fileName : "WaitingScreen.hx", lineNumber : 25, className : "view.WaitingScreen", methodName : "show", customParams : [waitingDelay]});
 		resetTimer(Settings.getInstance().START_TIME);
 		this.timer = new haxe_Timer(waitingDelay);

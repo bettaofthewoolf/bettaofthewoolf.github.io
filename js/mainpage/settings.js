@@ -50,8 +50,10 @@ function redirrectURL()
 
 function getPresentationVideoID()
 {
+	return "XdqF-KPn9So";
 }
 
 function getSpeackerVideoID()
 {
+	return "ZDgXHUTPpUQ";
 }
