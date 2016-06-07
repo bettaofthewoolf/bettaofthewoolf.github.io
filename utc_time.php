@@ -1,4 +1,5 @@
 <?php
+	header('Access-Control-Allow-Origin: *');
 	date_default_timezone_set('UTC');
 	echo date('').time() * 1000;
 	echo "\r\n";
