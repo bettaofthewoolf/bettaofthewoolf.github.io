@@ -1,78 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+	<title>Вебинар</title>
+	<meta charset="utf-8">
+	<meta name="author" content="pixelhint.com">
+	<meta name="description" content="Notify Under Constraction and Coming Soon Template"/>
 
-	<head>
-	
-		<link rel="stylesheet" href="style.css">
-		<meta name="viewport" content="width=device-width">
-		<meta charset="UTF-8">
-		<script src="js/mobile-detect.min.js"></script>
-	
-	</head>
-	
-	<body>
-		
-		<header>
-		
-			<div class="logo"></div>
-			<div class="title">12 способов сделать миллион в недвижимости за 90 дней</div>
-		
-		</header>
-		
-		<div class="slide">
-		
-			<div class="slideTitle">ПРЕЗЕНТАЦИЯ</div>
-			<div id="waitingScreen" hidden></div>
-			<div id="preloaderView" class="preloaderView"></div>
-			
-			<div class="lol"><center><div class="voiceVideo" id="presentationPlayer"></div></center></div>
-			
-		</div>
-		
-		<div class="leftBar">
-		
-			<div class="voice">
-				<div class="voiceTitle">КАМЕРА И ГОЛОС</div>
-				<!-- <div id="preloaderView" class="preloaderView"></div> -->
-				<div class="voiceImg"><center><img src="img/voice.jpg"></center></div>
-				<div class="voiceVideoWarper">
-					<div class="voiceVideo" id="speackerPlayer"></div>
-				</div>
-			</div>
-			
-				<div class="members" id="usersListContainer" hidden>
-					<div class="membersHeader">СПИСОК УЧАСТНИКОВ</div>
-					<div class="dokladTitle">ДОКЛАДЧИКИ</div>
-					<div class="docMember"><img src="img/red-member.png">Антон Мурыгин</div>
-					<div id="usersHeader">ВСЕГО УЧАСТНИКОВ: {0}</div>
-					<div id="users"></div>
-			
-				</div>
-			
-				<div class="chat" id="chatContainer" hidden>
-				
-					<div class="chatTitle">ЧАТ</div>
-					<div id="chat"></div>
-					<div class="chatBottom">
-						<input id="chatInput" placeholder="Написать сообщение"></input>
-						<button id="sendButton"> Отправить  </button>
-					</div>
-			
-				</div>
-		</div>
-		
-		<div>
-			<iframe id="showDiv" src="http://murigin.ru/150za6/button_order.html" frameborder="0" scrolling="no" style="margin:0; width:100%; height:150px; border:none; overflow:hidden;" hidden></iframe>
-		</div>
-		
-		<script src="js/mainpage/settings.js"></script>		
-		<script src="js/mainpage/player.js"></script>
-		<div id="eventEnd" hidden>
-			Мероприятие закончилось
-		</div>
-		<script src="js/mainpage/core.js"></script>
-		
-	</body>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
 
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/TimeCircles.js"></script>
+    <script type="text/javascript" src="js/backstretch.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/settings.js"></script>
+		
+	<script>
+		function resetTimer(value)
+		{
+			$(".counter").TimeCircles().rebuild();
+			$(".counter").TimeCircles().restart2(value);
+			//console.log($(".counter").TimeCircles().getTime());
+			
+			//console.log($(".counter"));
+		}
+	</script>
+	
+	<script type="text/javascript" src="js/WaitingScreen.js"></script>
+	
+</head>
+<body>
 
+	<section class="content wrapper">
+		<h1>До начала мероприятия осталось</h1>
+		<div id="timerView" class="counter clear"></div>
+	</section>
+	
+</body>
 </html>
