@@ -10,5 +10,5 @@ function getEndUrl()
 
 function getNextUrl(passKey)
 {
-	return "nextPage.html" + "?passKey=" + passKey;
+	return "room.html" + "?passKey=" + passKey;
 }
