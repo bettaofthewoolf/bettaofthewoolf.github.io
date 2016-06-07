@@ -13,15 +13,27 @@
     <script type="text/javascript" src="js/TimeCircles.js"></script>
     <script type="text/javascript" src="js/backstretch.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/settings.js"></script>
+		
+	<script>
+		function resetTimer(value)
+		{
+			$(".counter").TimeCircles().rebuild();
+			$(".counter").TimeCircles().restart2(value);
+			//console.log($(".counter").TimeCircles().getTime());
+			
+			//console.log($(".counter"));
+		}
+	</script>
+	
+	<script type="text/javascript" src="js/WaitingScreen.js"></script>
+	
 </head>
 <body>
 
 	<section class="content wrapper">
-
 		<h1>До начала мероприятия осталось</h1>
-
-		<div class="counter clear" data-date="2016-07-01 00:00:00"></div>
-
+		<div id="timerView" class="counter clear"></div>
 	</section>
 	
 </body>

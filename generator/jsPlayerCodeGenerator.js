@@ -807,6 +807,7 @@ passkey_PassKey.prototype = {
 		return haxe_crypto_Base64.encode(bytes);
 	}
 	,decode: function(encodedValue) {
+		this.encodedValue = encodedValue;
 		if(encodedValue == null || encodedValue.length == 0) {
 			this.status = 0;
 			return;
@@ -861,3 +862,5 @@ passkey_PassKey.EVRYDAY_SIZE = 11;
 passkey_PassKey.COMMON_SIZE = 15;
 Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=jsPlayerCodeGenerator.js.map

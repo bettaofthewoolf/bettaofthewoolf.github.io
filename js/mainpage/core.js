@@ -1048,6 +1048,7 @@ passkey_PassKey.prototype = {
 		return haxe_crypto_Base64.encode(bytes);
 	}
 	,decode: function(encodedValue) {
+		this.encodedValue = encodedValue;
 		if(encodedValue == null || encodedValue.length == 0) {
 			this.status = 0;
 			return;
@@ -1076,20 +1077,20 @@ passkey_PassKeyChecker.__name__ = true;
 passkey_PassKeyChecker.__super__ = events_Observer;
 passkey_PassKeyChecker.prototype = $extend(events_Observer.prototype,{
 	check: function() {
-		var passKey = this.getPassKey();
-		if(passKey.status != -1) {
+		this.passKey = this.getPassKey();
+		if(this.passKey.status != -1) {
 			this.endWithError();
 			return;
 		}
-		var startTime = passKey.startTime;
+		var startTime = this.passKey.startTime;
 		var startMonth = 0;
 		var startDay = 0;
-		if(passKey.isEveryday) {
+		if(this.passKey.isEveryday) {
 			startMonth = Settings.getInstance().TODAY_MONTH;
 			startDay = Settings.getInstance().TODAY_DAY;
 		} else {
-			startMonth = passKey.startMonth;
-			startDay = passKey.startDay;
+			startMonth = this.passKey.startMonth;
+			startDay = this.passKey.startDay;
 		}
 		startTime += Settings.getInstance().TODAY;
 		var currentTime = StableDate.currentTime;
@@ -1103,18 +1104,18 @@ passkey_PassKeyChecker.prototype = $extend(events_Observer.prototype,{
 		}
 		var date1 = 0;
 		var date2 = 0;
-		if(passKey.isTest) Settings.getInstance().START_TIME = currentTime - 30000; else {
+		if(this.passKey.isTest) Settings.getInstance().START_TIME = currentTime - 30000; else {
 			var month1 = Settings.getInstance().TODAY_MONTH;
 			var month2 = startMonth;
 			var date11 = month1 * 30 + Settings.getInstance().TODAY_DAY;
 			var date21 = month2 * 30 + startDay;
-			haxe_Log.trace("dates match",{ fileName : "PassKeyChecker.hx", lineNumber : 71, className : "passkey.PassKeyChecker", methodName : "check", customParams : [date11,date21]});
-			haxe_Log.trace(month2,{ fileName : "PassKeyChecker.hx", lineNumber : 72, className : "passkey.PassKeyChecker", methodName : "check", customParams : [startDay]});
+			haxe_Log.trace("dates match",{ fileName : "PassKeyChecker.hx", lineNumber : 72, className : "passkey.PassKeyChecker", methodName : "check", customParams : [date11,date21]});
+			haxe_Log.trace(month2,{ fileName : "PassKeyChecker.hx", lineNumber : 73, className : "passkey.PassKeyChecker", methodName : "check", customParams : [startDay]});
 			if(date11 > date21) {
 				this.dispatchEvent(new passkey_PassKeyCheckerEvents("eventEnd"));
 				return;
 			} else {
-				haxe_Log.trace("event will start at",{ fileName : "PassKeyChecker.hx", lineNumber : 82, className : "passkey.PassKeyChecker", methodName : "check", customParams : [startTime,(function($this) {
+				haxe_Log.trace("event will start at",{ fileName : "PassKeyChecker.hx", lineNumber : 83, className : "passkey.PassKeyChecker", methodName : "check", customParams : [startTime,(function($this) {
 					var $r;
 					var d = new Date();
 					d.setTime(startTime);
@@ -1125,10 +1126,10 @@ passkey_PassKeyChecker.prototype = $extend(events_Observer.prototype,{
 			}
 		}
 		var startTimeDelta = Settings.getInstance().START_TIME - currentTime;
-		haxe_Log.trace("videLength",{ fileName : "PassKeyChecker.hx", lineNumber : 89, className : "passkey.PassKeyChecker", methodName : "check", customParams : [Math.abs(startTimeDelta),passKey.videoLength]});
-		if(startTimeDelta < 0 && Math.abs(startTimeDelta) > passKey.videoLength) {
+		haxe_Log.trace("videLength",{ fileName : "PassKeyChecker.hx", lineNumber : 90, className : "passkey.PassKeyChecker", methodName : "check", customParams : [Math.abs(startTimeDelta),this.passKey.videoLength]});
+		if(startTimeDelta < 0 && Math.abs(startTimeDelta) > this.passKey.videoLength) {
 			this.dispatchEvent(new passkey_PassKeyCheckerEvents("eventEnd"));
-			haxe_Log.trace("### EVEND END DETECT BY PASS KEY VIDEO LENGTH",{ fileName : "PassKeyChecker.hx", lineNumber : 93, className : "passkey.PassKeyChecker", methodName : "check"});
+			haxe_Log.trace("### EVEND END DETECT BY PASS KEY VIDEO LENGTH",{ fileName : "PassKeyChecker.hx", lineNumber : 94, className : "passkey.PassKeyChecker", methodName : "check"});
 			return;
 		}
 		haxe_Log.trace((function($this) {
@@ -1138,19 +1139,19 @@ passkey_PassKeyChecker.prototype = $extend(events_Observer.prototype,{
 			d1.setTime(t);
 			$r = d1;
 			return $r;
-		}(this)),{ fileName : "PassKeyChecker.hx", lineNumber : 97, className : "passkey.PassKeyChecker", methodName : "check", customParams : [(function($this) {
+		}(this)),{ fileName : "PassKeyChecker.hx", lineNumber : 98, className : "passkey.PassKeyChecker", methodName : "check", customParams : [(function($this) {
 			var $r;
 			var d2 = new Date();
 			d2.setTime(currentTime);
 			$r = d2;
 			return $r;
 		}(this))]});
-		haxe_Log.trace("check start time",{ fileName : "PassKeyChecker.hx", lineNumber : 98, className : "passkey.PassKeyChecker", methodName : "check", customParams : [Math.floor(startTimeDelta / 1000 / 60),startTimeDelta]});
+		haxe_Log.trace("check start time",{ fileName : "PassKeyChecker.hx", lineNumber : 99, className : "passkey.PassKeyChecker", methodName : "check", customParams : [Math.floor(startTimeDelta / 1000 / 60),startTimeDelta]});
 		if(startTimeDelta <= 0) {
-			haxe_Log.trace("init video",{ fileName : "PassKeyChecker.hx", lineNumber : 102, className : "passkey.PassKeyChecker", methodName : "check"});
+			haxe_Log.trace("init video",{ fileName : "PassKeyChecker.hx", lineNumber : 103, className : "passkey.PassKeyChecker", methodName : "check"});
 			this.dispatchEvent(new passkey_PassKeyCheckerEvents("checkIsOk"));
 		} else {
-			haxe_Log.trace("show waiting",{ fileName : "PassKeyChecker.hx", lineNumber : 107, className : "passkey.PassKeyChecker", methodName : "check"});
+			haxe_Log.trace("show waiting",{ fileName : "PassKeyChecker.hx", lineNumber : 108, className : "passkey.PassKeyChecker", methodName : "check"});
 			this.dispatchEvent(new passkey_PassKeyCheckerEvents("waiingForKey"));
 		}
 	}
