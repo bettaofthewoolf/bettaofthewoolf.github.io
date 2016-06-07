@@ -45,7 +45,7 @@ DateCorrectionTool.prototype = $extend(events_Observer.prototype,{
 		this.correctBy(this.getPath());
 	}
 	,getPath: function() {
-		if(window.location.href.indexOf("bettaofthewoolf") != -1) return "http://phptester.net/code.php70"; else return "utc_time.php";
+		if(window.location.href.indexOf("bettaofthewoolf") != -1) return "http://murigin.ru/auto/utc_time.php"; else return "utc_time.php";
 	}
 	,correctBy: function(path) {
 		var dataLoader = new external_DataLoader();
@@ -286,7 +286,7 @@ external_DataLoader.__name__ = true;
 external_DataLoader.__super__ = events_Observer;
 external_DataLoader.prototype = $extend(events_Observer.prototype,{
 	load: function(path) {
-		this.httpRequest.open("POST",path,true);
+		this.httpRequest.open("GET",path,true);
 		this.httpRequest.send();
 	}
 	,onLoadComplete: function() {
