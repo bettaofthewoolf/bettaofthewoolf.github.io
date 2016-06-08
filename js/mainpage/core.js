@@ -45,8 +45,7 @@ DateCorrectionTool.prototype = $extend(events_Observer.prototype,{
 		this.correctBy(this.getPath());
 	}
 	,getPath: function() {
-		var currentLocation = window.location.href;
-		if(currentLocation.indexOf("bettaofthewoolf") != -1 || currentLocation.indexOf("localhost") != -1) return "http://murigin.ru/auto/utc_time.php"; else return "utc_time.php";
+		if(window.location.href.indexOf("bettaofthewoolf") != -1) return "http://murigin.ru/auto/utc_time.php"; else return "utc_time.php";
 	}
 	,correctBy: function(path) {
 		var dataLoader = new external_DataLoader();
@@ -56,15 +55,15 @@ DateCorrectionTool.prototype = $extend(events_Observer.prototype,{
 	,onDataLoad: function(e) {
 		var dataParts;
 		if(e.data.indexOf("\r\n") != -1) dataParts = e.data.split("\r\n"); else dataParts = e.data.split("\n");
-		var correction = parseFloat(dataParts[0]) * 1000;
+		var correction = parseFloat(dataParts[0]);
 		StableDate.correct(correction);
 		Settings.getInstance().TODAY_MONTH = Std.parseInt(dataParts[2]);
-		Settings.getInstance().TODAY_DAY = Std.parseInt(dataParts[3]);
-		Settings.getInstance().TODAY = parseFloat(dataParts[1]) * 1000;
-		haxe_Log.trace(dataParts[0],{ fileName : "DateCorrectionTool.hx", lineNumber : 55, className : "DateCorrectionTool", methodName : "onDataLoad"});
-		haxe_Log.trace(Settings.getInstance().TODAY_MONTH,{ fileName : "DateCorrectionTool.hx", lineNumber : 56, className : "DateCorrectionTool", methodName : "onDataLoad"});
-		haxe_Log.trace(Settings.getInstance().TODAY_DAY,{ fileName : "DateCorrectionTool.hx", lineNumber : 57, className : "DateCorrectionTool", methodName : "onDataLoad"});
-		haxe_Log.trace(Settings.getInstance().TODAY,{ fileName : "DateCorrectionTool.hx", lineNumber : 58, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		Settings.getInstance().TODAY_DAY = Std.parseInt(dataParts[1]);
+		Settings.getInstance().TODAY = Std.parseInt(dataParts[3]);
+		haxe_Log.trace(dataParts[0],{ fileName : "DateCorrectionTool.hx", lineNumber : 54, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		haxe_Log.trace(Settings.getInstance().TODAY_MONTH,{ fileName : "DateCorrectionTool.hx", lineNumber : 55, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		haxe_Log.trace(Settings.getInstance().TODAY_DAY,{ fileName : "DateCorrectionTool.hx", lineNumber : 56, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		haxe_Log.trace(Settings.getInstance().TODAY,{ fileName : "DateCorrectionTool.hx", lineNumber : 57, className : "DateCorrectionTool", methodName : "onDataLoad"});
 		this.dispatchEvent(new events_Event("complete"));
 	}
 	,__class__: DateCorrectionTool
@@ -300,7 +299,7 @@ chatManagment_ChatController.prototype = {
 		var dataLoader = new external_DataLoader();
 		dataLoader.addEventListener("onLoad",$bind(this,this.onDataLoaded));
 		dataLoader.load("chat.txt");
-		var timer = new haxe_Timer(250);
+		var timer = new haxe_Timer(500);
 		timer.run = $bind(this,this.onUpdate);
 	}
 	,onUpdate: function() {
@@ -326,11 +325,6 @@ chatManagment_ChatController.prototype = {
 			++_g;
 			var chatMessageParts = chatMessage.split("|");
 			var time = chatMessageParts[0];
-			var sign = 1;
-			if(time.charAt(0) == "-") {
-				time = HxOverrides.substr(time,1,time.length);
-				sign = -1;
-			}
 			var timeParts = time.split(":");
 			var dateParts = [];
 			var hours = Std.parseInt(timeParts[0]);
@@ -339,7 +333,7 @@ chatManagment_ChatController.prototype = {
 			if(timeParts.length == 3) seconds = Std.parseInt(timeParts[3]);
 			var name = chatMessageParts[1];
 			var message = chatMessageParts[2];
-			var messageTime = Settings.getInstance().START_TIME + ((hours * 60 + minutes) * 60 + seconds) * 1000 * sign + messagesPadding;
+			var messageTime = Settings.getInstance().TODAY + ((hours * 60 + minutes) * 60 + seconds) * 1000 + messagesPadding;
 			if(messageTime < StableDate.currentTime && count > 0) {
 				count--;
 				toShow.unshift(new chatManagment_ChatEventMessage(messageTime,name,message));
@@ -1341,22 +1335,8 @@ view_MainView.prototype = {
 			text += "<div class=\"chatMessege\"><span class=\"chatName\">" + Std.string(messageData.name) + ":</span>" + Std.string(messageData.message) + "</div>";
 		}
 		this.chatMessages.innerHTML = text;
-		var currentScroll = this.chatMessages.scrollTop;
 		var scrollHeight = Math.floor(Math.max(this.chatMessages.scrollHeight,this.chatMessages.clientHeight));
 		this.chatMessages.scrollTop = scrollHeight - this.chatMessages.clientHeight;
-		if(this.chatMessages.scrollTop == currentScroll) this.scrollTextDelayed();
-	}
-	,scrollTextDelayed: function() {
-		if(this.scrollDelay == null) this.scrollDelay = new haxe_Timer(100);
-		this.scrollDelay.run = $bind(this,this.onScrollDelayed);
-	}
-	,onScrollDelayed: function() {
-		var scrollHeight = Math.floor(Math.max(this.chatMessages.scrollHeight,this.chatMessages.clientHeight));
-		this.chatMessages.scrollTop = scrollHeight - this.chatMessages.clientHeight;
-		if(this.chatMessages.scrollTop != 0) {
-			this.scrollDelay.stop();
-			this.scrollDelay = null;
-		}
 	}
 	,updateUsersList: function(e) {
 		var text = "";
