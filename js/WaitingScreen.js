@@ -45,7 +45,8 @@ DateCorrectionTool.prototype = $extend(events_Observer.prototype,{
 		this.correctBy(this.getPath());
 	}
 	,getPath: function() {
-		if(window.location.href.indexOf("bettaofthewoolf") != -1) return "http://murigin.ru/auto/utc_time.php"; else return "utc_time.php";
+		var currentLocation = window.location.href;
+		if(currentLocation.indexOf("bettaofthewoolf") != -1 || currentLocation.indexOf("localhost") != -1) return "http://murigin.ru/auto/utc_time.php"; else return "utc_time.php";
 	}
 	,correctBy: function(path) {
 		var dataLoader = new external_DataLoader();
@@ -55,15 +56,15 @@ DateCorrectionTool.prototype = $extend(events_Observer.prototype,{
 	,onDataLoad: function(e) {
 		var dataParts;
 		if(e.data.indexOf("\r\n") != -1) dataParts = e.data.split("\r\n"); else dataParts = e.data.split("\n");
-		var correction = parseFloat(dataParts[0]);
+		var correction = parseFloat(dataParts[0]) * 1000;
 		StableDate.correct(correction);
 		Settings.getInstance().TODAY_MONTH = Std.parseInt(dataParts[2]);
 		Settings.getInstance().TODAY_DAY = Std.parseInt(dataParts[3]);
-		Settings.getInstance().TODAY = Std.parseInt(dataParts[1]);
-		haxe_Log.trace(dataParts[0],{ fileName : "DateCorrectionTool.hx", lineNumber : 54, className : "DateCorrectionTool", methodName : "onDataLoad"});
-		haxe_Log.trace(Settings.getInstance().TODAY_MONTH,{ fileName : "DateCorrectionTool.hx", lineNumber : 55, className : "DateCorrectionTool", methodName : "onDataLoad"});
-		haxe_Log.trace(Settings.getInstance().TODAY_DAY,{ fileName : "DateCorrectionTool.hx", lineNumber : 56, className : "DateCorrectionTool", methodName : "onDataLoad"});
-		haxe_Log.trace(Settings.getInstance().TODAY,{ fileName : "DateCorrectionTool.hx", lineNumber : 57, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		Settings.getInstance().TODAY = parseFloat(dataParts[1]) * 1000;
+		haxe_Log.trace(dataParts[0],{ fileName : "DateCorrectionTool.hx", lineNumber : 55, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		haxe_Log.trace(Settings.getInstance().TODAY_MONTH,{ fileName : "DateCorrectionTool.hx", lineNumber : 56, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		haxe_Log.trace(Settings.getInstance().TODAY_DAY,{ fileName : "DateCorrectionTool.hx", lineNumber : 57, className : "DateCorrectionTool", methodName : "onDataLoad"});
+		haxe_Log.trace(Settings.getInstance().TODAY,{ fileName : "DateCorrectionTool.hx", lineNumber : 58, className : "DateCorrectionTool", methodName : "onDataLoad"});
 		this.dispatchEvent(new events_Event("complete"));
 	}
 	,__class__: DateCorrectionTool

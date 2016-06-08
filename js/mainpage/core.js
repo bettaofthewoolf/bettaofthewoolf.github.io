@@ -56,11 +56,11 @@ DateCorrectionTool.prototype = $extend(events_Observer.prototype,{
 	,onDataLoad: function(e) {
 		var dataParts;
 		if(e.data.indexOf("\r\n") != -1) dataParts = e.data.split("\r\n"); else dataParts = e.data.split("\n");
-		var correction = parseFloat(dataParts[0]);
+		var correction = parseFloat(dataParts[0]) * 1000;
 		StableDate.correct(correction);
 		Settings.getInstance().TODAY_MONTH = Std.parseInt(dataParts[2]);
 		Settings.getInstance().TODAY_DAY = Std.parseInt(dataParts[3]);
-		Settings.getInstance().TODAY = Std.parseInt(dataParts[1]);
+		Settings.getInstance().TODAY = parseFloat(dataParts[1]) * 1000;
 		haxe_Log.trace(dataParts[0],{ fileName : "DateCorrectionTool.hx", lineNumber : 55, className : "DateCorrectionTool", methodName : "onDataLoad"});
 		haxe_Log.trace(Settings.getInstance().TODAY_MONTH,{ fileName : "DateCorrectionTool.hx", lineNumber : 56, className : "DateCorrectionTool", methodName : "onDataLoad"});
 		haxe_Log.trace(Settings.getInstance().TODAY_DAY,{ fileName : "DateCorrectionTool.hx", lineNumber : 57, className : "DateCorrectionTool", methodName : "onDataLoad"});

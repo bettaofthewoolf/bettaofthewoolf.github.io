@@ -1,11 +1,8 @@
 <?php
 	header('Access-Control-Allow-Origin: *');
 	date_default_timezone_set('UTC');
-	echo date('').time() * 1000;
+	$hour3 = 3 * 60 * 60;
+	echo date("U\r\nd\r\nm", date('').time() + $hour3);
 	echo "\r\n";
-	echo strtotime('today midnight') * 1000 - 3 * 60 * 60 * 1000;
-	echo "\r\n";
-	echo date('m');
-	echo "\r\n";
-	echo date('d');
+	echo strtotime('today midnight', date('').time() + $hour3);
 ?>
