@@ -14,7 +14,7 @@ function onVideoEnded()
 	window.onbeforeunload = null;
 	
 	if(isRedirrect())
-		window.location = redirrectUrl();
+		window.location = redirrectURL();
 }
 
 function onStart()
