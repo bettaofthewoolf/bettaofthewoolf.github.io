@@ -40,7 +40,7 @@ function showDivDelay()
 
 function isRedirrect()
 {
-	return false; // flag is need redirrect after video end
+	return true; // flag is need redirrect after video end
 }
 
 function redirrectURL()
