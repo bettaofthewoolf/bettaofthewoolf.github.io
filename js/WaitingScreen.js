@@ -1196,7 +1196,7 @@ view_TimerCircle.prototype = $extend(view_Drawable.prototype,{
 	draw: function(context) {
 		view_Drawable.prototype.draw.call(this,context);
 		this.x = this.bindElement.offsetLeft + this.bindElement.offsetWidth / 2;
-		this.y = this.bindElement.offsetTop + (this.bindElement.offsetHeight - 75) / 2;
+		this.y = this.bindElement.offsetTop + (this.bindElement.clientHeight - this.size) / 2;
 		var fullCircle = 2 * Math.PI;
 		context.beginPath();
 		context.arc(this.x,this.y,this.size,0,fullCircle,this.ccw);
@@ -1227,6 +1227,7 @@ view_TimerUnitViewController.prototype = {
 			this.element.innerHTML = StringTools.replace(StringTools.replace(this.textPattern,"{0}",newFlooredValue == null?"null":"" + newFlooredValue),"{1}",this.declOfNum(value | 0,this.textCases));
 			this.lastValue = newFlooredValue;
 		}
+		this.bgView.size = this.element.offsetHeight * 0.40;
 		this.bgView.value = value / this.maxValue;
 	}
 	,declOfNum: function(number,titles) {
