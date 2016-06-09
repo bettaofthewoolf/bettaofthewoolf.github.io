@@ -73,7 +73,7 @@ Main.validateTimeInput = function(input) {
 	return input == null || input.length == 0 || input.indexOf(":") == -1 || input.split(":").length < 2;
 };
 Main.onClick = function() {
-	Main.traceOutput.innerText = "";
+	if(Main.traceOutput != null) Main.traceOutput.innerText = "";
 	var baseDateString = Main.datePicker.value;
 	var baseDateParts = baseDateString.split("/");
 	var timeString;
@@ -118,25 +118,25 @@ Main.onClick = function() {
 	var isTest = Main.isTestControll.checked;
 	var key = new passkey_PassKey(startTime,videoLengthValue,isEverydayChecked,startMonth,startDay,isTest);
 	var encoded = key.encode();
-	haxe_Log.trace(encoded,{ fileName : "Main.hx", lineNumber : 132, className : "Main", methodName : "onClick"});
-	haxe_Log.trace("report",{ fileName : "Main.hx", lineNumber : 134, className : "Main", methodName : "onClick"});
+	haxe_Log.trace(encoded,{ fileName : "Main.hx", lineNumber : 133, className : "Main", methodName : "onClick"});
+	haxe_Log.trace("report",{ fileName : "Main.hx", lineNumber : 135, className : "Main", methodName : "onClick"});
 	haxe_Log.trace("start time: " + Std.string((function($this) {
 		var $r;
 		var d = new Date();
 		d.setTime(key.startTime);
 		$r = d;
 		return $r;
-	}(this))),{ fileName : "Main.hx", lineNumber : 135, className : "Main", methodName : "onClick"});
+	}(this))),{ fileName : "Main.hx", lineNumber : 136, className : "Main", methodName : "onClick"});
 	key = new passkey_PassKey();
 	key.decode(encoded);
-	if(key.isKey == true) haxe_Log.trace("isKey - pass",{ fileName : "Main.hx", lineNumber : 141, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong key pass data, value=" + (key.isKey == null?"null":"" + key.isKey),{ fileName : "Main.hx", lineNumber : 143, className : "Main", methodName : "onClick"});
-	if(key.isTest == isTest) haxe_Log.trace("isTest - pass, value=" + (key.isTest == null?"null":"" + key.isTest),{ fileName : "Main.hx", lineNumber : 146, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong test data, value=" + (key.isTest == null?"null":"" + key.isTest),{ fileName : "Main.hx", lineNumber : 148, className : "Main", methodName : "onClick"});
-	if(key.isEveryday == Main.isEveryday.checked) haxe_Log.trace("isEveryday - pass, value=" + (key.isEveryday == null?"null":"" + key.isEveryday),{ fileName : "Main.hx", lineNumber : 151, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong isEveryday data, value=" + (key.isEveryday == null?"null":"" + key.isEveryday),{ fileName : "Main.hx", lineNumber : 153, className : "Main", methodName : "onClick"});
-	if(key.startTime == startTime) haxe_Log.trace("timeString - pass, value=" + key.startTime,{ fileName : "Main.hx", lineNumber : 156, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong timeString data, value=" + key.startTime,{ fileName : "Main.hx", lineNumber : 158, className : "Main", methodName : "onClick"});
-	if(key.videoLength == videoLengthValue) haxe_Log.trace("videoLength - pass, value=" + key.videoLength,{ fileName : "Main.hx", lineNumber : 161, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong videoLength data, value=" + key.videoLength,{ fileName : "Main.hx", lineNumber : 163, className : "Main", methodName : "onClick"});
+	if(key.isKey == true) haxe_Log.trace("isKey - pass",{ fileName : "Main.hx", lineNumber : 142, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong key pass data, value=" + (key.isKey == null?"null":"" + key.isKey),{ fileName : "Main.hx", lineNumber : 144, className : "Main", methodName : "onClick"});
+	if(key.isTest == isTest) haxe_Log.trace("isTest - pass, value=" + (key.isTest == null?"null":"" + key.isTest),{ fileName : "Main.hx", lineNumber : 147, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong test data, value=" + (key.isTest == null?"null":"" + key.isTest),{ fileName : "Main.hx", lineNumber : 149, className : "Main", methodName : "onClick"});
+	if(key.isEveryday == Main.isEveryday.checked) haxe_Log.trace("isEveryday - pass, value=" + (key.isEveryday == null?"null":"" + key.isEveryday),{ fileName : "Main.hx", lineNumber : 152, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong isEveryday data, value=" + (key.isEveryday == null?"null":"" + key.isEveryday),{ fileName : "Main.hx", lineNumber : 154, className : "Main", methodName : "onClick"});
+	if(key.startTime == startTime) haxe_Log.trace("timeString - pass, value=" + key.startTime,{ fileName : "Main.hx", lineNumber : 157, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong timeString data, value=" + key.startTime,{ fileName : "Main.hx", lineNumber : 159, className : "Main", methodName : "onClick"});
+	if(key.videoLength == videoLengthValue) haxe_Log.trace("videoLength - pass, value=" + key.videoLength,{ fileName : "Main.hx", lineNumber : 162, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong videoLength data, value=" + key.videoLength,{ fileName : "Main.hx", lineNumber : 164, className : "Main", methodName : "onClick"});
 	if(!isEverydayChecked) {
-		if(key.startMonth == startMonth) haxe_Log.trace("startMonth - pass, value=" + key.startMonth,{ fileName : "Main.hx", lineNumber : 168, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong startMonth data, value=" + key.startMonth,{ fileName : "Main.hx", lineNumber : 170, className : "Main", methodName : "onClick"});
-		if(key.startDay == startDay) haxe_Log.trace("startDay - pass, value=" + startDay,{ fileName : "Main.hx", lineNumber : 173, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong startDay data, value=" + key.startDay,{ fileName : "Main.hx", lineNumber : 175, className : "Main", methodName : "onClick"});
+		if(key.startMonth == startMonth) haxe_Log.trace("startMonth - pass, value=" + key.startMonth,{ fileName : "Main.hx", lineNumber : 169, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong startMonth data, value=" + key.startMonth,{ fileName : "Main.hx", lineNumber : 171, className : "Main", methodName : "onClick"});
+		if(key.startDay == startDay) haxe_Log.trace("startDay - pass, value=" + startDay,{ fileName : "Main.hx", lineNumber : 174, className : "Main", methodName : "onClick"}); else haxe_Log.trace("Error: wrong startDay data, value=" + key.startDay,{ fileName : "Main.hx", lineNumber : 176, className : "Main", methodName : "onClick"});
 	}
 	Main.output.value = Main.baseURL.value + "?passKey=" + encoded;
 };
