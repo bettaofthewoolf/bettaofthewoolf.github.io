@@ -89,7 +89,6 @@ pointer-events:none;
 
 .voiceImg{
 
-
 height:100%;
 width:auto;
 
@@ -130,7 +129,7 @@ border-radius:0 0 5px 5px;
 position: relative;
 padding-bottom: 56.25%;
 height: 0;
-display:none;
+display:none
 
 }
 
@@ -385,6 +384,12 @@ height:100%;
 background-image:url(http://www.customautotrim.com/img/loading.png);
 background-repeat:no-repeat;
 background-position:50% 50%;
+
+}
+
+#preloaderView2{
+
+margin-top:300px;
 
 }
 
