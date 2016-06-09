@@ -5,12 +5,12 @@ function getTimeCorrectURL()
 
 function getMessagesPadding()
 {
-	return 26; //in seconds
+	return 9; //in seconds
 }
 
 function getStartVolume()
 {
-	return 15; //0-100
+	return 100; //0-100
 }
 
 function getVideoWidth()
