@@ -36,48 +36,6 @@ $(document).ready(function(){
         duration: 2500
     });
 
-
-
-
-
-	
- 	//code for the cerlces Countdouwn
-	$(".counter").TimeCircles({
-	    "direction": "Clockwise",
-	    "animation": "Tricks",
-	    "bg_width": 0,
-	    "fg_width": 0.01,
-	    "circle_bg_color": "rgba(255, 255, 255, 0)",
-	    "circle_bg_fill_color": "rgba(255, 255, 255, 0.1)",
-	    "time": {
-	        "Days": {
-	            "text": "Дней",
-	            "color": "#ffffff",
-	            "show": true
-	        },
-	        "Hours": {
-	            "text": "Часов",
-	            "color": "#ffffff",
-	            "show": true
-	        },
-	        "Minutes": {
-	            "text": "Минут",
-	            "color": "#ffffff",
-	            "show": true
-	        },
-	        "Seconds": {
-	            "text": "Секунд",
-	            "color": "#ffffff",
-	            "show": true
-	        }
-	    }
-	});
-
-
-
-
-
-	
 	//To show loading icon on form submit
 	$('#sub_form').submit(function(){
 			submit_icons('icon', 'loading');
