@@ -13,17 +13,17 @@
 	</head>
 
 	<body>
-		<p>Date: <input type="text" id="datepicker"></p>
-		<p>Time: <input type="text" id="timepicker" value="20:00"></p>
-		<p>Video length: <input type="text" id="videoLength" value="00:00:00"></p>
-		<p>BaseURL: <input type="text" style="width:400px;" id="baseURL"></p>
-		<p>Output: <input id="out" style="width:400px;" /></p>
-		<p>Каждыый день: <input type="checkbox" id="isEveryday"></p>
-		<p>Тест: <input type="checkbox" id="isTest"></p>
-		<button id="generate">Generate</button>
+		<p>Дата: <input type="text" id="datepicker"></p>
+		<p>Время начала: <input type="text" id="timepicker" value="20:00"></p>
+		<p>Закрыть вход через: <input type="text" id="videoLength" value="00:00:00"></p>
+		<p>Базовый URL: <input type="text" style="width:400px;" id="baseURL"></p>
+		<p>Сгенерированная ссылка: <input id="out" style="width:400px;" /></p>
+		<p>Каждый день: <input type="checkbox" id="isEveryday"></p>
+		<p>Запуск сразу: <input type="checkbox" id="isTest"></p>
+		<button id="generate">Сгенерировать</button>
 		
 		<button class="btn" data-clipboard-target="#out">
-			Copy to clipboard
+			Скопировать в буфер
 		</button>
 		
 		<script>
@@ -33,7 +33,7 @@
 			new Clipboard('.btn');
 		</script>
 		
-		<div id="haxe:trace"></div>
+		<!--<div id="haxe:trace"></div>-->
 		<script type="text/javascript" src="jsPlayerCodeGenerator.js"></script>
 	</body>
 		
