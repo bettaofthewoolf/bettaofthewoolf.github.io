@@ -259,6 +259,9 @@ Std.parseInt = function(x) {
 };
 var StringTools = function() { };
 StringTools.__name__ = true;
+StringTools.replace = function(s,sub,by) {
+	return s.split(sub).join(by);
+};
 StringTools.fastCodeAt = function(s,index) {
 	return s.charCodeAt(index);
 };
@@ -1114,6 +1117,11 @@ passkey_PassKeyCheckerEvents.prototype = $extend(events_Event.prototype,{
 	__class__: passkey_PassKeyCheckerEvents
 });
 var view_WaitingScreen = function() {
+	this.cases = [2,0,1,1,1,2];
+	this.secondTittles = ["Секунда","Секунды","Секунд"];
+	this.minuteTittles = ["Минута","Минуты","Минут"];
+	this.hoursTittles = ["Час","Часа","Часов"];
+	this.dayTittles = ["День","Дня","Дней"];
 	events_Observer.call(this);
 	this.buildUI();
 };
@@ -1122,17 +1130,49 @@ view_WaitingScreen.__super__ = events_Observer;
 view_WaitingScreen.prototype = $extend(events_Observer.prototype,{
 	show: function() {
 		var waitingDelay = Std["int"](Settings.getInstance().START_TIME - StableDate.currentTime - 7200000);
-		haxe_Log.trace("waiting delay",{ fileName : "WaitingScreen.hx", lineNumber : 25, className : "view.WaitingScreen", methodName : "show", customParams : [waitingDelay]});
+		haxe_Log.trace("waiting delay",{ fileName : "WaitingScreen.hx", lineNumber : 36, className : "view.WaitingScreen", methodName : "show", customParams : [waitingDelay]});
 		resetTimer(Settings.getInstance().START_TIME);
+		this.tickTimer = new haxe_Timer(500);
+		this.tickTimer.run = $bind(this,this.tick);
 		this.timer = new haxe_Timer(waitingDelay);
 		this.timer.run = $bind(this,this.onTimerIsEnd);
+	}
+	,tick: function() {
+		var seconds = (Settings.getInstance().START_TIME - StableDate.currentTime) / 1000;
+		var minutes = Math.floor(seconds / 60);
+		var hours = Math.floor(minutes / 60);
+		var days = Math.floor(hours / 24);
+		seconds = Math.floor(seconds % 60);
+		minutes = Math.floor(minutes % 60);
+		if(days > 0) hours = hours % 24;
+		this.timerViewD.innerHTML = StringTools.replace(StringTools.replace(this.textPatterns[0],"{0}",this.formatToTime(days)),"{1}",this.declOfNum(days | 0,this.dayTittles));
+		this.timerViewH.innerHTML = StringTools.replace(StringTools.replace(this.textPatterns[1],"{0}",this.formatToTime(hours)),"{1}",this.declOfNum(hours | 0,this.hoursTittles));
+		this.timerViewM.innerHTML = StringTools.replace(StringTools.replace(this.textPatterns[2],"{0}",this.formatToTime(minutes)),"{1}",this.declOfNum(minutes | 0,this.minuteTittles));
+		this.timerViewS.innerHTML = StringTools.replace(StringTools.replace(this.textPatterns[3],"{0}",this.formatToTime(seconds)),"{1}",this.declOfNum(seconds | 0,this.secondTittles));
+	}
+	,declOfNum: function(number,titles) {
+		return titles[number % 100 > 4 && number % 100 < 20?2:this.cases[number % 10 < 5?number % 10:5]];
+	}
+	,formatToTime: function(value) {
+		var valueAsString;
+		if(value == null) valueAsString = "null"; else valueAsString = "" + value;
+		if(valueAsString.length == 1) valueAsString = "0" + valueAsString;
+		return valueAsString;
 	}
 	,onTimerIsEnd: function() {
 		this.timer.stop();
 		this.dispatchEvent(new view_events_WaitingScreenEvent("waitingEnd"));
 	}
 	,buildUI: function() {
-		this.timerView = window.document.getElementById("timerView");
+		this.timerViewD = window.document.getElementById("timeD");
+		this.timerViewH = window.document.getElementById("timeH");
+		this.timerViewM = window.document.getElementById("timeM");
+		this.timerViewS = window.document.getElementById("timeS");
+		this.textPatterns = [];
+		this.textPatterns.push(this.timerViewD.innerHTML);
+		this.textPatterns.push(this.timerViewH.innerHTML);
+		this.textPatterns.push(this.timerViewM.innerHTML);
+		this.textPatterns.push(this.timerViewS.innerHTML);
 	}
 	,__class__: view_WaitingScreen
 });
