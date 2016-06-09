@@ -272,6 +272,14 @@ events_Event.__name__ = true;
 events_Event.prototype = {
 	__class__: events_Event
 };
+var events_ConvasEvents = function(type) {
+	events_Event.call(this,type);
+};
+events_ConvasEvents.__name__ = true;
+events_ConvasEvents.__super__ = events_Event;
+events_ConvasEvents.prototype = $extend(events_Event.prototype,{
+	__class__: events_ConvasEvents
+});
 var events_DataEvent = function(type,data) {
 	events_Event.call(this,type);
 	this.data = data;
@@ -1116,8 +1124,112 @@ passkey_PassKeyCheckerEvents.__super__ = events_Event;
 passkey_PassKeyCheckerEvents.prototype = $extend(events_Event.prototype,{
 	__class__: passkey_PassKeyCheckerEvents
 });
-var view_WaitingScreen = function() {
+var view_ConvasSimple = function() {
+	this.displayList = [];
+	events_Observer.call(this);
+};
+view_ConvasSimple.__name__ = true;
+view_ConvasSimple.__super__ = events_Observer;
+view_ConvasSimple.prototype = $extend(events_Observer.prototype,{
+	addChild: function(drawable) {
+		this.displayList.push(drawable);
+	}
+	,init: function(id) {
+		this.convas = window.document.getElementById(id);
+		this.convas.width = window.innerWidth;
+		this.convas.height = window.innerHeight;
+		haxe_Log.trace(this.convas,{ fileName : "ConvasSimple.hx", lineNumber : 35, className : "view.ConvasSimple", methodName : "init"});
+		var canvasSupported = this.isCanvasSupported();
+		if(!canvasSupported && typeof(G_vmlCanvasManager) != "undefined") {
+			G_vmlCanvasManager.initElement(this.convas);
+			canvasSupported = true;
+		}
+		if(canvasSupported) this.context = this.convas.getContext("2d");
+		this.render();
+	}
+	,isCanvasSupported: function() {
+		return ($_=this.convas,$bind($_,$_.getContext)) != null && this.convas.getContext("2d") != null;
+	}
+	,render: function() {
+		this.clear();
+		requestAnimationFrame($bind(this,this.render));
+		this.dispatchEvent(new events_ConvasEvents("preRender"));
+		var _g = 0;
+		var _g1 = this.displayList;
+		while(_g < _g1.length) {
+			var drawable = _g1[_g];
+			++_g;
+			drawable.draw(this.context);
+		}
+	}
+	,clear: function() {
+		this.context.clearRect(0,0,this.convas.width,this.convas.height);
+	}
+	,__class__: view_ConvasSimple
+});
+var view_Drawable = function() {
+};
+view_Drawable.__name__ = true;
+view_Drawable.prototype = {
+	draw: function(context) {
+	}
+	,__class__: view_Drawable
+};
+var view_TimerCircle = function(bindElement) {
+	this.startAngle = Math.PI * 1.5;
+	this.ccw = false;
+	this.size = 50;
+	this.y = 0;
+	this.x = 0;
+	this.value = 1.0;
+	view_Drawable.call(this);
+	this.bindElement = bindElement;
+};
+view_TimerCircle.__name__ = true;
+view_TimerCircle.__super__ = view_Drawable;
+view_TimerCircle.prototype = $extend(view_Drawable.prototype,{
+	draw: function(context) {
+		view_Drawable.prototype.draw.call(this,context);
+		this.x = this.bindElement.offsetLeft + this.bindElement.offsetWidth / 2;
+		this.y = this.bindElement.offsetTop + this.bindElement.offsetHeight / 2;
+		var fullCircle = 2 * Math.PI;
+		context.beginPath();
+		context.arc(this.x,this.y,this.size,0,fullCircle,this.ccw);
+		context.fillStyle = "rgba(255, 255, 255, 0.3)";
+		context.fill();
+		context.beginPath();
+		context.arc(this.x,this.y,this.size,this.startAngle,this.startAngle + fullCircle * this.value,this.ccw);
+		context.strokeStyle = "white";
+		context.lineWidth = 2;
+		context.stroke();
+	}
+	,__class__: view_TimerCircle
+});
+var view_TimerUnitViewController = function(element,textCases,maxValue) {
 	this.cases = [2,0,1,1,1,2];
+	this.lastValue = -1;
+	this.maxValue = maxValue;
+	this.textPattern = element.innerHTML;
+	this.textCases = textCases;
+	this.bgView = new view_TimerCircle(element);
+	this.element = element;
+};
+view_TimerUnitViewController.__name__ = true;
+view_TimerUnitViewController.prototype = {
+	update: function(value) {
+		var newFlooredValue = Math.floor(value);
+		if(this.lastValue != newFlooredValue) {
+			this.element.innerHTML = StringTools.replace(StringTools.replace(this.textPattern,"{0}",newFlooredValue == null?"null":"" + newFlooredValue),"{1}",this.declOfNum(value | 0,this.textCases));
+			this.lastValue = newFlooredValue;
+		}
+		this.bgView.value = value / this.maxValue;
+	}
+	,declOfNum: function(number,titles) {
+		return titles[number % 100 > 4 && number % 100 < 20?2:this.cases[number % 10 < 5?number % 10:5]];
+	}
+	,__class__: view_TimerUnitViewController
+};
+var view_WaitingScreen = function() {
 	this.secondTittles = ["Секунда","Секунды","Секунд"];
 	this.minuteTittles = ["Минута","Минуты","Минут"];
 	this.hoursTittles = ["Час","Часа","Часов"];
@@ -1130,27 +1242,23 @@ view_WaitingScreen.__super__ = events_Observer;
 view_WaitingScreen.prototype = $extend(events_Observer.prototype,{
 	show: function() {
 		var waitingDelay = Std["int"](Settings.getInstance().START_TIME - StableDate.currentTime - 7200000);
-		haxe_Log.trace("waiting delay",{ fileName : "WaitingScreen.hx", lineNumber : 36, className : "view.WaitingScreen", methodName : "show", customParams : [waitingDelay]});
-		this.tickTimer = new haxe_Timer(500);
-		this.tickTimer.run = $bind(this,this.tick);
+		haxe_Log.trace("waiting delay",{ fileName : "WaitingScreen.hx", lineNumber : 39, className : "view.WaitingScreen", methodName : "show", customParams : [waitingDelay]});
 		this.timer = new haxe_Timer(waitingDelay);
 		this.timer.run = $bind(this,this.onTimerIsEnd);
+		this.convas.init("timerCanvas");
+	}
+	,onPreRender: function(e) {
+		this.tick();
 	}
 	,tick: function() {
 		var seconds = (Settings.getInstance().START_TIME - StableDate.currentTime) / 1000;
-		var minutes = Math.floor(seconds / 60);
-		var hours = Math.floor(minutes / 60);
-		var days = Math.floor(hours / 24);
-		seconds = Math.floor(seconds % 60);
-		minutes = Math.floor(minutes % 60);
+		var minutes = seconds / 60;
+		var hours = minutes / 60;
+		var days = hours / 24;
+		seconds = seconds % 60;
+		minutes = minutes % 60;
 		if(days > 0) hours = hours % 24;
-		this.timerViewD.innerHTML = StringTools.replace(StringTools.replace(this.textPatterns[0],"{0}",this.formatToTime(days)),"{1}",this.declOfNum(days | 0,this.dayTittles));
-		this.timerViewH.innerHTML = StringTools.replace(StringTools.replace(this.textPatterns[1],"{0}",this.formatToTime(hours)),"{1}",this.declOfNum(hours | 0,this.hoursTittles));
-		this.timerViewM.innerHTML = StringTools.replace(StringTools.replace(this.textPatterns[2],"{0}",this.formatToTime(minutes)),"{1}",this.declOfNum(minutes | 0,this.minuteTittles));
-		this.timerViewS.innerHTML = StringTools.replace(StringTools.replace(this.textPatterns[3],"{0}",this.formatToTime(seconds)),"{1}",this.declOfNum(seconds | 0,this.secondTittles));
-	}
-	,declOfNum: function(number,titles) {
-		return titles[number % 100 > 4 && number % 100 < 20?2:this.cases[number % 10 < 5?number % 10:5]];
+		this.updateUi(days,hours,minutes,seconds);
 	}
 	,formatToTime: function(value) {
 		var valueAsString;
@@ -1162,16 +1270,24 @@ view_WaitingScreen.prototype = $extend(events_Observer.prototype,{
 		this.timer.stop();
 		this.dispatchEvent(new view_events_WaitingScreenEvent("waitingEnd"));
 	}
+	,updateUi: function(days,hours,minutes,seconds) {
+		this.timerViewD.update(days);
+		this.timerViewH.update(hours);
+		this.timerViewM.update(minutes);
+		this.timerViewS.update(seconds);
+	}
 	,buildUI: function() {
-		this.timerViewD = window.document.getElementById("timeD");
-		this.timerViewH = window.document.getElementById("timeH");
-		this.timerViewM = window.document.getElementById("timeM");
-		this.timerViewS = window.document.getElementById("timeS");
-		this.textPatterns = [];
-		this.textPatterns.push(this.timerViewD.innerHTML);
-		this.textPatterns.push(this.timerViewH.innerHTML);
-		this.textPatterns.push(this.timerViewM.innerHTML);
-		this.textPatterns.push(this.timerViewS.innerHTML);
+		this.convas = new view_ConvasSimple();
+		this.convas.addEventListener("preRender",$bind(this,this.onPreRender));
+		this.timerViewD = new view_TimerUnitViewController(window.document.getElementById("timeD"),this.dayTittles,30);
+		this.timerViewH = new view_TimerUnitViewController(window.document.getElementById("timeH"),this.hoursTittles,24);
+		this.timerViewM = new view_TimerUnitViewController(window.document.getElementById("timeM"),this.minuteTittles,60);
+		this.timerViewS = new view_TimerUnitViewController(window.document.getElementById("timeS"),this.secondTittles,60);
+		this.updateUi(0,0,0,0);
+		this.convas.addChild(this.timerViewD.bgView);
+		this.convas.addChild(this.timerViewH.bgView);
+		this.convas.addChild(this.timerViewM.bgView);
+		this.convas.addChild(this.timerViewS.bgView);
 	}
 	,__class__: view_WaitingScreen
 });
@@ -1208,6 +1324,7 @@ StableDate.updateTimer = new haxe_Timer(500);
 StableDate.currentTime = 0;
 StableDate.lastTime = -1;
 events_Event.COMPLETE = "complete";
+events_ConvasEvents.PRE_RENDER = "preRender";
 events_DataEvent.ON_LOAD = "onLoad";
 external_DataLoader.ON_LOAD = "onLoad";
 haxe_crypto_Base64.CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
