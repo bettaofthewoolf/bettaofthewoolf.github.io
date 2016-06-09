@@ -346,7 +346,7 @@ text-align:center;
 .timer{
 
 margin:0 auto;
-margin-top:5vh;
+margin-top:7vh;
 width:60vw;
 height:20vh;
 
@@ -375,8 +375,7 @@ display: block;
     width: 100%;
     text-align: center;
     font-family: 'Lato-Bold', Arial;
-    margin: 0.25em 0 0.5em 0; 
-    font-weight: bold;
+    margin-top:1vh; 
     color: #fff;
     font-size: 2vh;
 
@@ -391,13 +390,14 @@ margin-right:0;
 
 .circle h4{
 
-font-size:7vh;
+font-size:5vh;
 margin: 0px;
 margin-top:3vh;
 padding: 0px;
 text-align: center;
 text-transform: uppercase;
 font-family: 'Lato-Regular', Arial;
+font-weight:bold;
 color: #fff;
 font-weight: normal!important;
 
