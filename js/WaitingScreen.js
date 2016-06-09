@@ -1136,9 +1136,7 @@ view_ConvasSimple.prototype = $extend(events_Observer.prototype,{
 	}
 	,init: function(id) {
 		this.convas = window.document.getElementById(id);
-		this.convas.width = window.innerWidth;
-		this.convas.height = window.innerHeight;
-		haxe_Log.trace(this.convas,{ fileName : "ConvasSimple.hx", lineNumber : 35, className : "view.ConvasSimple", methodName : "init"});
+		this.resize(window.innerWidth,window.innerHeight);
 		var canvasSupported = this.isCanvasSupported();
 		if(!canvasSupported && typeof(G_vmlCanvasManager) != "undefined") {
 			G_vmlCanvasManager.initElement(this.convas);
@@ -1147,11 +1145,18 @@ view_ConvasSimple.prototype = $extend(events_Observer.prototype,{
 		if(canvasSupported) this.context = this.convas.getContext("2d");
 		this.render();
 	}
+	,resize: function(width,height) {
+		this.height = height;
+		this.width = width;
+		this.convas.width = width;
+		this.convas.height = height;
+	}
 	,isCanvasSupported: function() {
 		return ($_=this.convas,$bind($_,$_.getContext)) != null && this.convas.getContext("2d") != null;
 	}
 	,render: function() {
 		this.clear();
+		if(this.width != window.innerWidth || this.height != window.innerHeight) this.resize(window.innerWidth,window.innerHeight);
 		requestAnimationFrame($bind(this,this.render));
 		this.dispatchEvent(new events_ConvasEvents("preRender"));
 		var _g = 0;
@@ -1178,7 +1183,7 @@ view_Drawable.prototype = {
 var view_TimerCircle = function(bindElement) {
 	this.startAngle = Math.PI * 1.5;
 	this.ccw = false;
-	this.size = 50;
+	this.size = 75;
 	this.y = 0;
 	this.x = 0;
 	this.value = 1.0;
@@ -1191,7 +1196,7 @@ view_TimerCircle.prototype = $extend(view_Drawable.prototype,{
 	draw: function(context) {
 		view_Drawable.prototype.draw.call(this,context);
 		this.x = this.bindElement.offsetLeft + this.bindElement.offsetWidth / 2;
-		this.y = this.bindElement.offsetTop + this.bindElement.offsetHeight / 2;
+		this.y = this.bindElement.offsetTop + (this.bindElement.offsetHeight - 75) / 2;
 		var fullCircle = 2 * Math.PI;
 		context.beginPath();
 		context.arc(this.x,this.y,this.size,0,fullCircle,this.ccw);
@@ -1242,7 +1247,7 @@ view_WaitingScreen.__super__ = events_Observer;
 view_WaitingScreen.prototype = $extend(events_Observer.prototype,{
 	show: function() {
 		var waitingDelay = Std["int"](Settings.getInstance().START_TIME - StableDate.currentTime - 7200000);
-		haxe_Log.trace("waiting delay",{ fileName : "WaitingScreen.hx", lineNumber : 39, className : "view.WaitingScreen", methodName : "show", customParams : [waitingDelay]});
+		haxe_Log.trace("waiting delay",{ fileName : "WaitingScreen.hx", lineNumber : 36, className : "view.WaitingScreen", methodName : "show", customParams : [waitingDelay]});
 		this.timer = new haxe_Timer(waitingDelay);
 		this.timer.run = $bind(this,this.onTimerIsEnd);
 		this.convas.init("timerCanvas");
