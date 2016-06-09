@@ -12,3 +12,8 @@ function getNextUrl(passKey)
 {
 	return "room.html" + "?passKey=" + passKey;
 }
+
+function getTimerCircleSizeRatio(passKey)
+{
+	return 0.45; // 0 to 1 (1 is 100% 0.5 is 50%, etc...);
+}

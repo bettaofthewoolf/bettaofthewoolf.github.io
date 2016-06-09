@@ -1218,6 +1218,7 @@ var view_TimerUnitViewController = function(element,textCases,maxValue) {
 	this.textCases = textCases;
 	this.bgView = new view_TimerCircle(element);
 	this.element = element;
+	this.timerCirclesSize = getTimerCircleSizeRatio();
 };
 view_TimerUnitViewController.__name__ = true;
 view_TimerUnitViewController.prototype = {
@@ -1227,7 +1228,7 @@ view_TimerUnitViewController.prototype = {
 			this.element.innerHTML = StringTools.replace(StringTools.replace(this.textPattern,"{0}",newFlooredValue == null?"null":"" + newFlooredValue),"{1}",this.declOfNum(value | 0,this.textCases));
 			this.lastValue = newFlooredValue;
 		}
-		this.bgView.size = this.element.offsetHeight * 0.40;
+		this.bgView.size = this.element.offsetHeight * this.timerCirclesSize;
 		this.bgView.value = value / this.maxValue;
 	}
 	,declOfNum: function(number,titles) {
