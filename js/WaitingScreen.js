@@ -1251,6 +1251,7 @@ view_WaitingScreen.prototype = $extend(events_Observer.prototype,{
 		this.tick();
 	}
 	,tick: function() {
+		StableDate.advanceTime();
 		var seconds = (Settings.getInstance().START_TIME - StableDate.currentTime) / 1000;
 		var minutes = seconds / 60;
 		var hours = minutes / 60;
