@@ -18,13 +18,30 @@
 	
 </head>
 <body>
-	<canvas id="timerCanvas" class="timerCanvas"></canvas>
+	
 		<div class="title">До начала мероприятия осталось</div>
 		<div class="timer">
-			<div id="timeD" class="circle"><h4>{0}</h4><span>{1}</span></div>
-			<div id="timeH" class="circle"><h4>{0}</h4><span>{1}</span></div>
-			<div id="timeM" class="circle"><h4>{0}</h4><span>{1}</span></div>
-			<div id="timeS" class="circle"><h4>{0}</h4><span>{1}</span></div>
+			
+			<div id="timeD" class="circle">
+				<canvas class="timerCircle" style="background-color:#331111;" width="100" height="100"></canvas>
+				<div class="textValue"><h4>{0}</h4><span>{1}</span></div>
+			</div>
+				
+			<div id="timeH" class="circle">
+				<canvas class="timerCircle" width="100" height="100"></canvas>
+				<div class="textValue"><h4>{0}</h4><span>{1}</span></div>
+			</div>
+				
+			<div id="timeM" class="circle">
+				<canvas class="timerCircle" width="100" height="100"></canvas>
+				<div class="textValue"><h4>{0}</h4><span>{1}</span></div>
+			</div>
+				
+			<div id="timeS" class="circle">
+				<canvas class="timerCircle" width="100" height="100"></canvas>
+				<div class="textValue"><h4>{0}</h4><span>{1}</span></div>
+			</div>
+				
 		</div>
 		
 	

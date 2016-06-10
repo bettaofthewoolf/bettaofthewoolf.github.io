@@ -1134,16 +1134,29 @@ view_ConvasSimple.prototype = $extend(events_Observer.prototype,{
 	addChild: function(drawable) {
 		this.displayList.push(drawable);
 	}
-	,init: function(id) {
+	,initByClass: function(element,clazz,autoUpdate) {
+		if(autoUpdate == null) autoUpdate = false;
+		this.autoUpdate = autoUpdate;
+		this.convas = element.getElementsByClassName(clazz)[0];
+		this.width = this.convas.width;
+		this.height = this.convas.height;
+		this.getContext();
+		if(autoUpdate) this.render();
+	}
+	,init: function(id,autoUpdate) {
+		if(autoUpdate == null) autoUpdate = false;
+		this.autoUpdate = autoUpdate;
 		this.convas = window.document.getElementById(id);
-		this.resize(window.innerWidth,window.innerHeight);
+		this.getContext();
+		if(autoUpdate) this.render();
+	}
+	,getContext: function() {
 		var canvasSupported = this.isCanvasSupported();
 		if(!canvasSupported && typeof(G_vmlCanvasManager) != "undefined") {
 			G_vmlCanvasManager.initElement(this.convas);
 			canvasSupported = true;
 		}
 		if(canvasSupported) this.context = this.convas.getContext("2d");
-		this.render();
 	}
 	,resize: function(width,height) {
 		this.height = height;
@@ -1155,9 +1168,10 @@ view_ConvasSimple.prototype = $extend(events_Observer.prototype,{
 		return ($_=this.convas,$bind($_,$_.getContext)) != null && this.convas.getContext("2d") != null;
 	}
 	,render: function() {
+		this.width = this.convas.width;
+		this.height = this.convas.height;
 		this.clear();
-		if(this.width != window.innerWidth || this.height != window.innerHeight) this.resize(window.innerWidth,window.innerHeight);
-		requestAnimationFrame($bind(this,this.render));
+		if(this.autoUpdate) requestAnimationFrame($bind(this,this.render));
 		this.dispatchEvent(new events_ConvasEvents("preRender"));
 		var _g = 0;
 		var _g1 = this.displayList;
@@ -1168,7 +1182,7 @@ view_ConvasSimple.prototype = $extend(events_Observer.prototype,{
 		}
 	}
 	,clear: function() {
-		this.context.clearRect(0,0,this.convas.width,this.convas.height);
+		this.context.clearRect(0,0,this.width,this.height);
 	}
 	,__class__: view_ConvasSimple
 });
@@ -1180,7 +1194,7 @@ view_Drawable.prototype = {
 	}
 	,__class__: view_Drawable
 };
-var view_TimerCircle = function(bindElement) {
+var view_TimerCircle = function() {
 	this.startAngle = Math.PI * 1.5;
 	this.ccw = false;
 	this.size = 75;
@@ -1188,36 +1202,44 @@ var view_TimerCircle = function(bindElement) {
 	this.x = 0;
 	this.value = 1.0;
 	view_Drawable.call(this);
-	this.bindElement = bindElement;
 };
 view_TimerCircle.__name__ = true;
 view_TimerCircle.__super__ = view_Drawable;
 view_TimerCircle.prototype = $extend(view_Drawable.prototype,{
 	draw: function(context) {
 		view_Drawable.prototype.draw.call(this,context);
-		this.x = this.bindElement.offsetLeft + this.bindElement.offsetWidth / 2;
-		this.y = this.bindElement.offsetTop + (this.bindElement.clientHeight - this.size) / 2;
+		this.x = this.size;
+		this.y = this.size;
 		var fullCircle = 2 * Math.PI;
 		context.beginPath();
-		context.arc(this.x,this.y,this.size,0,fullCircle,this.ccw);
+		context.arc(this.x,this.y,this.size - 2,0,fullCircle,this.ccw);
 		context.fillStyle = "rgba(255, 255, 255, 0.3)";
 		context.fill();
 		context.beginPath();
-		context.arc(this.x,this.y,this.size,this.startAngle,this.startAngle + fullCircle * this.value,this.ccw);
+		context.arc(this.x,this.y,this.size - 2,this.startAngle,this.startAngle + fullCircle * this.value,this.ccw);
 		context.strokeStyle = "white";
+		context.lineWidth = 2;
+		context.stroke();
+		context.beginPath();
+		context.arc(this.x,this.y,this.size - 2,this.startAngle + fullCircle * this.value,this.startAngle,this.ccw);
+		context.strokeStyle = "rgba(0, 0, 0, 0.1)";
 		context.lineWidth = 2;
 		context.stroke();
 	}
 	,__class__: view_TimerCircle
 });
 var view_TimerUnitViewController = function(element,textCases,maxValue) {
-	this.cases = [2,0,1,1,1,2];
 	this.lastValue = -1;
-	this.maxValue = maxValue;
-	this.textPattern = element.innerHTML;
-	this.textCases = textCases;
-	this.bgView = new view_TimerCircle(element);
+	this.cases = [2,0,1,1,1,2];
 	this.element = element;
+	this.textCases = textCases;
+	this.maxValue = maxValue;
+	this.textValue = element.getElementsByClassName("textValue")[0];
+	this.textPattern = this.textValue.innerHTML;
+	this.canvas = new view_ConvasSimple();
+	this.canvas.initByClass(element,"timerCircle");
+	this.circleView = new view_TimerCircle();
+	this.canvas.addChild(this.circleView);
 	this.timerCirclesSize = getTimerCircleSizeRatio();
 };
 view_TimerUnitViewController.__name__ = true;
@@ -1225,11 +1247,12 @@ view_TimerUnitViewController.prototype = {
 	update: function(value) {
 		var newFlooredValue = Math.floor(value);
 		if(this.lastValue != newFlooredValue) {
-			this.element.innerHTML = StringTools.replace(StringTools.replace(this.textPattern,"{0}",newFlooredValue == null?"null":"" + newFlooredValue),"{1}",this.declOfNum(value | 0,this.textCases));
+			this.textValue.innerHTML = StringTools.replace(StringTools.replace(this.textPattern,"{0}",newFlooredValue == null?"null":"" + newFlooredValue),"{1}",this.declOfNum(value | 0,this.textCases));
 			this.lastValue = newFlooredValue;
 		}
-		this.bgView.size = this.element.offsetHeight * this.timerCirclesSize;
-		this.bgView.value = value / this.maxValue;
+		this.circleView.size = Math.max(this.canvas.width,this.canvas.height) / 2;
+		this.circleView.value = value / this.maxValue;
+		this.canvas.render();
 	}
 	,declOfNum: function(number,titles) {
 		return titles[number % 100 > 4 && number % 100 < 20?2:this.cases[number % 10 < 5?number % 10:5]];
@@ -1243,6 +1266,7 @@ var view_WaitingScreen = function() {
 	this.dayTittles = ["День","Дня","Дней"];
 	events_Observer.call(this);
 	this.buildUI();
+	this.tick();
 };
 view_WaitingScreen.__name__ = true;
 view_WaitingScreen.__super__ = events_Observer;
@@ -1252,12 +1276,9 @@ view_WaitingScreen.prototype = $extend(events_Observer.prototype,{
 		haxe_Log.trace("waiting delay",{ fileName : "WaitingScreen.hx", lineNumber : 36, className : "view.WaitingScreen", methodName : "show", customParams : [waitingDelay]});
 		this.timer = new haxe_Timer(waitingDelay);
 		this.timer.run = $bind(this,this.onTimerIsEnd);
-		this.convas.init("timerCanvas");
-	}
-	,onPreRender: function(e) {
-		this.tick();
 	}
 	,tick: function() {
+		requestAnimationFrame($bind(this,this.tick));
 		StableDate.advanceTime();
 		var seconds = (Settings.getInstance().START_TIME - StableDate.currentTime) / 1000;
 		var minutes = seconds / 60;
@@ -1267,12 +1288,6 @@ view_WaitingScreen.prototype = $extend(events_Observer.prototype,{
 		minutes = minutes % 60;
 		if(days > 0) hours = hours % 24;
 		this.updateUi(days,hours,minutes,seconds);
-	}
-	,formatToTime: function(value) {
-		var valueAsString;
-		if(value == null) valueAsString = "null"; else valueAsString = "" + value;
-		if(valueAsString.length == 1) valueAsString = "0" + valueAsString;
-		return valueAsString;
 	}
 	,onTimerIsEnd: function() {
 		this.timer.stop();
@@ -1285,17 +1300,11 @@ view_WaitingScreen.prototype = $extend(events_Observer.prototype,{
 		this.timerViewS.update(seconds);
 	}
 	,buildUI: function() {
-		this.convas = new view_ConvasSimple();
-		this.convas.addEventListener("preRender",$bind(this,this.onPreRender));
 		this.timerViewD = new view_TimerUnitViewController(window.document.getElementById("timeD"),this.dayTittles,30);
 		this.timerViewH = new view_TimerUnitViewController(window.document.getElementById("timeH"),this.hoursTittles,24);
 		this.timerViewM = new view_TimerUnitViewController(window.document.getElementById("timeM"),this.minuteTittles,60);
 		this.timerViewS = new view_TimerUnitViewController(window.document.getElementById("timeS"),this.secondTittles,60);
 		this.updateUi(0,0,0,0);
-		this.convas.addChild(this.timerViewD.bgView);
-		this.convas.addChild(this.timerViewH.bgView);
-		this.convas.addChild(this.timerViewM.bgView);
-		this.convas.addChild(this.timerViewS.bgView);
 	}
 	,__class__: view_WaitingScreen
 });
