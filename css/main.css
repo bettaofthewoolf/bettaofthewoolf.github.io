@@ -352,21 +352,24 @@ height:20vh;
 
 }
 
-.timerCanvas{
+.timerCircle{
 
-margin-top:0px;
-position:absolute;
-top:0;
-left:0;
+height:100%;
+
+}
+
+.textValue{
+
+margin-top:-80%;
 
 }
 
 .circle{
 
 float:left;
-width:21%;
-margin-right:5%;
-height:20vh;
+width:13.5vw ;
+margin-right:2vw;
+height:13.5vw;
 
 }
 
